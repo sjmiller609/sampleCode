@@ -1,0 +1,66 @@
+PROGRAM WallDefense IS
+
+INSTRUCTION Infect4Life IS
+WHILE true DO
+	infect
+END WHILE
+END Infect4Life
+
+INSTRUCTION FindWall IS
+WHILE next-is-not-wall DO
+	IF next-is-enemy THEN
+		infect
+	ELSE 
+		IF next-is-friend THEN
+			turnright
+		ELSE 	
+			move
+		END IF
+	END IF
+END WHILE
+END FindWall
+
+INSTRUCTION TurnRightWall IS
+turnright
+WHILE next-is-not-friend DO
+IF next-is-enemy THEN
+	infect
+ELSE 
+	IF next-is-empty THEN
+		move
+	ELSE 
+		turnright	
+	END IF
+END IF
+END WHILE
+turnright
+END TurnRightWall
+
+INSTRUCTION TurnLeftWall IS
+turnleft
+WHILE next-is-not-friend DO
+IF next-is-enemy THEN
+	infect
+ELSE 
+	IF next-is-empty THEN
+		move
+	ELSE 
+		turnleft	
+	END IF
+END IF
+END WHILE
+turnleft
+END TurnLeftWall
+
+BEGIN
+
+FindWall
+IF random THEN
+	TurnRightWall
+ELSE
+	TurnLeftWall
+END IF
+Infect4Life
+
+END WallDefense
+

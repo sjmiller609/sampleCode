@@ -1,0 +1,16 @@
+Author:
+	Steven Miller (.5252)
+
+Comments:
+	Input array starts at 0x200
+	Output starts at 0x400 and is labeled more specifically in the .ys
+	Stack starts at 0x800
+
+NOTES: 
+	uses yas/yis to compile/run, respectively
+	yas lab5.ys
+	yis lab5.yo
+
+This program just does some simple array manipulation and arithmetic. It takes an input from the source code. It is the second assembly program I've written.
+
+This program shows that I can do very basic Assembly and that I understand low-level programming. Also it shows that I can make organized code for languages that I am unfamiliar with.

@@ -1,0 +1,4 @@
+IF true THEN
+skip
+END IF
+move

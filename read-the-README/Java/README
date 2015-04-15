@@ -1,0 +1,10 @@
+Steven Miller
+
+TLDR: look at the Tag* directory for an example of Java code I wrote.
+-------------------
+
+The introduction courses for Computer Science and Engineering at OSU are Software I and II.
+They are "in Java", but they start with fill-in-the-blank type projects, then progressively give you less and less stuff to start with.
+
+What's unusual is that the projects use special components made by the CSE department at OSU. So, we didn't use the normal libraries. The last project of Software II (Tag Cloud Generation) uses the standard libraries of Java, and it is separated from the other projects in this directory.
+

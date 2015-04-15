@@ -1,0 +1,172 @@
+#LAB 5, CSE2421
+#Author: Steven Miller
+#11/24/14
+# Execution starts at 0x0
+# Initialize Input Array
+
+		.pos 0x200
+		.align 4
+Array:		.long 12
+		.long -2
+		.long 16
+		.long -10
+		.long 13
+		.long -27
+		.long 10
+Done:		.long 0
+
+		#results are below, starting at 0x400
+		.pos 0x400
+		.align 4
+Output:
+CountResult:	.long 0
+
+MinResult:	.long 0
+
+MaxResult:	.long 0
+
+ReverseResult:	.long 0
+
+		#Stack starts at 0x800
+		.pos 0x800
+		.align 4
+Stack:		
+		
+		#begin main procedure at position zero
+		.pos 0x0
+		.align 4
+Main:
+		irmovl Stack,%ebp 	#Set the base pointer
+		rrmovl %ebp,%esp 	#Set the stack pointer
+		irmovl Array,%eax 	#Set %eax pointing to Array
+		
+		pushl %eax
+		call Count
+		popl %eax
+		
+		pushl %eax
+		call Min
+		popl %eax
+		
+		pushl %eax
+		call Max
+		popl %eax
+
+		pushl %eax
+		call Reverse
+		popl %eax
+
+		jmp Exit
+
+Write:	
+		rmmovl %esi, (%edx)	#write result to output
+		rrmovl %ebp, %esp	#prepare stack to return
+		popl %ebp		#restore %ebp for caller frame
+		ret
+
+Count:		pushl %ebp		#save main's base pointer
+		rrmovl %esp, %ebp	#set count's base pointer
+		irmovl $0, %esi		#initialize count to 0
+
+CountLoop:	#check if eax is pointing to Done, if so write output
+		irmovl Done, %ebx
+		subl %eax, %ebx
+		irmovl CountResult, %edx
+		je Write
+
+		#past here means we are not at Done yet
+		#so we need to increment the result and eax
+		irmovl $4, %ebx
+		addl %ebx, %eax
+		irmovl $1, %ebx
+		addl %ebx, %esi
+		jmp CountLoop
+		
+Min:
+		pushl %ebp		#save mian's base pointer
+		rrmovl %esp, %ebp	#set Min's base pointer
+
+		mrmovl (%eax), %esi #initialize esi
+MinLoop:
+		irmovl Done, %ebx	#check if eax points to Done
+		subl %eax, %ebx
+		irmovl MinResult, %edx
+		je Write		#if it does, then write output
+
+		# so eax does not point to Done
+
+		mrmovl (%eax), %ebx	#compare current esi to eax poniter value
+		pushl %ebx
+		subl %esi, %ebx		#if negative, ebx<esi, so replace
+		popl %ebx
+		cmovl %ebx, %esi	#replace esi with ebx if less
+		
+		irmovl $4, %ebx		#increment eax
+		addl %ebx, %eax
+
+		jmp MinLoop
+
+Max:
+		pushl %ebp		#save mian's base pointer
+		rrmovl %esp, %ebp	#set Max's base pointer
+
+		mrmovl (%eax), %esi #initialize esi
+MaxLoop:
+		irmovl Done, %ebx	#check if eax points to Done
+		subl %eax, %ebx
+		irmovl MaxResult, %edx
+		je Write		#if it does, then write output
+
+		# so eax does not point to Done
+
+		mrmovl (%eax), %ebx	#compare current esi to eax poniter value
+		subl %esi, %ebx		#if positive, ebx<esi, so replace
+		mrmovl(%eax), %ebx
+
+		cmovg %ebx, %esi	#replace esi with ebx if positive 
+
+		irmovl $4, %ebx		#increment eax
+		addl %ebx, %eax
+
+		jmp MaxLoop
+	
+Reverse:
+		pushl %ebp
+		rrmovl %esp, %ebp
+		irmovl $0, %edi		#set stack counter	
+ReverseLoop:		
+		#check if eax points to done
+		irmovl Done, %ebx	#check if eax points to Done
+		subl %eax, %ebx
+		irmovl ReverseResult, %edx
+		je ReverseDone
+		#increment edi, put and push esi, loop
+
+		irmovl $1, %ebx
+		addl %ebx, %edi
+		mrmovl (%eax), %esi
+		pushl %esi
+		irmovl $4, %ebx
+		addl %ebx, %eax
+		jmp ReverseLoop
+ReverseDone:
+
+		#if edi is greater than zero, decrement edi and return esi
+		irmovl $0, %ebx
+		addl %ebx, %edi
+		je Return
+
+		irmovl $1, %ebx
+		subl %ebx, %edi
+		
+		popl %esi
+		rmmovl %esi, (%edx)
+
+		irmovl $4, %ebx
+		addl %ebx, %edx
+		jmp ReverseDone
+		
+Return:
+		ret		
+
+Exit:		halt

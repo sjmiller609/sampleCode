@@ -1,0 +1,45 @@
+PROGRAM WallRide IS
+
+INSTRUCTION NotWall IS
+WHILE next-is-not-wall DO
+	IF next-is-enemy THEN
+		infect
+	ELSE 
+		IF next-is-empty THEN
+			move
+		ELSE
+			IF random THEN
+			infect
+			ELSE
+			turnright
+			END IF
+		END IF
+	END IF
+END WHILE
+turnright
+END NotWall
+
+INSTRUCTION Wall IS
+WHILE next-is-not-friend DO
+	IF next-is-enemy THEN
+		infect
+	ELSE 
+		IF next-is-empty THEN
+			move
+		ELSE
+			turnright
+		END IF
+	END IF
+END WHILE
+turnright
+END Wall
+
+
+BEGIN
+
+WHILE true DO
+	NotWall
+	Wall
+END WHILE
+
+END WallRide

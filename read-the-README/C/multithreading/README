@@ -1,0 +1,10 @@
+Author: Steven Miller
+compile with:
+gcc lab3.c -o lab3 -lpthread -lrt
+run with:
+lab3 <seconds to sleep> <number of producers> <number of consumers>
+
+NOTES:
+This is a multithreaded program using POSIX threads. It implements a producer-consumer situation. This program best shows that I understand multithreaded programming and how to use semaphores.
+
+I wrote all of the code here myself

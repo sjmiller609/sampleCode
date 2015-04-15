@@ -1,0 +1,172 @@
+                      | #LAB 5, CSE2421
+                      | #Author: Steven Miller
+                      | #11/24/14
+                      | # Execution starts at 0x0
+                      | # Initialize Input Array
+                      | 
+  0x200:              | 		.pos 0x200
+  0x200:              | 		.align 4
+  0x200: 0c000000     | Array:		.long 12
+  0x204: feffffff     | 		.long -2
+  0x208: 10000000     | 		.long 16
+  0x20c: f6ffffff     | 		.long -10
+  0x210: 0d000000     | 		.long 13
+  0x214: e5ffffff     | 		.long -27
+  0x218: 0a000000     | 		.long 10
+  0x21c: 00000000     | Done:		.long 0
+                      | 
+                      | 		#results are below, starting at 0x400
+  0x400:              | 		.pos 0x400
+  0x400:              | 		.align 4
+  0x400:              | Output:
+  0x400: 00000000     | CountResult:	.long 0
+                      | 
+  0x404: 00000000     | MinResult:	.long 0
+                      | 
+  0x408: 00000000     | MaxResult:	.long 0
+                      | 
+  0x40c: 00000000     | ReverseResult:	.long 0
+                      | 
+                      | 		#Stack starts at 0x800
+  0x800:              | 		.pos 0x800
+  0x800:              | 		.align 4
+  0x800:              | Stack:		
+                      | 		
+                      | 		#begin main procedure at position zero
+  0x000:              | 		.pos 0x0
+  0x000:              | 		.align 4
+  0x000:              | Main:
+  0x000: 30f500080000 | 		irmovl Stack,%ebp 	#Set the base pointer
+  0x006: 2054         | 		rrmovl %ebp,%esp 	#Set the stack pointer
+  0x008: 30f000020000 | 		irmovl Array,%eax 	#Set %eax pointing to Array
+                      | 		
+  0x00e: a00f         | 		pushl %eax
+  0x010: 8042000000   | 		call Count
+  0x015: b00f         | 		popl %eax
+                      | 		
+  0x017: a00f         | 		pushl %eax
+  0x019: 8074000000   | 		call Min
+  0x01e: b00f         | 		popl %eax
+                      | 		
+  0x020: a00f         | 		pushl %eax
+  0x022: 80ac000000   | 		call Max
+  0x027: b00f         | 		popl %eax
+                      | 
+  0x029: a00f         | 		pushl %eax
+  0x02b: 80e6000000   | 		call Reverse
+  0x030: b00f         | 		popl %eax
+                      | 
+  0x032: 704b010000   | 		jmp Exit
+                      | 
+  0x037:              | Write:	
+  0x037: 406200000000 | 		rmmovl %esi, (%edx)	#write result to output
+  0x03d: 2054         | 		rrmovl %ebp, %esp	#prepare stack to return
+  0x03f: b05f         | 		popl %ebp		#restore %ebp for caller frame
+  0x041: 90           | 		ret
+                      | 
+  0x042: a05f         | Count:		pushl %ebp		#save main's base pointer
+  0x044: 2045         | 		rrmovl %esp, %ebp	#set count's base pointer
+  0x046: 30f600000000 | 		irmovl $0, %esi		#initialize count to 0
+                      | 
+  0x04c:              | CountLoop:	#check if eax is pointing to Done, if so write output
+  0x04c: 30f31c020000 | 		irmovl Done, %ebx
+  0x052: 6103         | 		subl %eax, %ebx
+  0x054: 30f200040000 | 		irmovl CountResult, %edx
+  0x05a: 7337000000   | 		je Write
+                      | 
+                      | 		#past here means we are not at Done yet
+                      | 		#so we need to increment the result and eax
+  0x05f: 30f304000000 | 		irmovl $4, %ebx
+  0x065: 6030         | 		addl %ebx, %eax
+  0x067: 30f301000000 | 		irmovl $1, %ebx
+  0x06d: 6036         | 		addl %ebx, %esi
+  0x06f: 704c000000   | 		jmp CountLoop
+                      | 		
+  0x074:              | Min:
+  0x074: a05f         | 		pushl %ebp		#save mian's base pointer
+  0x076: 2045         | 		rrmovl %esp, %ebp	#set Min's base pointer
+                      | 
+  0x078: 506000000000 | 		mrmovl (%eax), %esi #initialize esi
+  0x07e:              | MinLoop:
+  0x07e: 30f31c020000 | 		irmovl Done, %ebx	#check if eax points to Done
+  0x084: 6103         | 		subl %eax, %ebx
+  0x086: 30f204040000 | 		irmovl MinResult, %edx
+  0x08c: 7337000000   | 		je Write		#if it does, then write output
+                      | 
+                      | 		# so eax does not point to Done
+                      | 
+  0x091: 503000000000 | 		mrmovl (%eax), %ebx	#compare current esi to eax poniter value
+  0x097: a03f         | 		pushl %ebx
+  0x099: 6163         | 		subl %esi, %ebx		#if negative, ebx<esi, so replace
+  0x09b: b03f         | 		popl %ebx
+  0x09d: 2236         | 		cmovl %ebx, %esi	#replace esi with ebx if less
+                      | 		
+  0x09f: 30f304000000 | 		irmovl $4, %ebx		#increment eax
+  0x0a5: 6030         | 		addl %ebx, %eax
+                      | 
+  0x0a7: 707e000000   | 		jmp MinLoop
+                      | 
+  0x0ac:              | Max:
+  0x0ac: a05f         | 		pushl %ebp		#save mian's base pointer
+  0x0ae: 2045         | 		rrmovl %esp, %ebp	#set Max's base pointer
+                      | 
+  0x0b0: 506000000000 | 		mrmovl (%eax), %esi #initialize esi
+  0x0b6:              | MaxLoop:
+  0x0b6: 30f31c020000 | 		irmovl Done, %ebx	#check if eax points to Done
+  0x0bc: 6103         | 		subl %eax, %ebx
+  0x0be: 30f208040000 | 		irmovl MaxResult, %edx
+  0x0c4: 7337000000   | 		je Write		#if it does, then write output
+                      | 
+                      | 		# so eax does not point to Done
+                      | 
+  0x0c9: 503000000000 | 		mrmovl (%eax), %ebx	#compare current esi to eax poniter value
+  0x0cf: 6163         | 		subl %esi, %ebx		#if positive, ebx<esi, so replace
+  0x0d1: 503000000000 | 		mrmovl(%eax), %ebx
+                      | 
+  0x0d7: 2636         | 		cmovg %ebx, %esi	#replace esi with ebx if positive 
+                      | 
+  0x0d9: 30f304000000 | 		irmovl $4, %ebx		#increment eax
+  0x0df: 6030         | 		addl %ebx, %eax
+                      | 
+  0x0e1: 70b6000000   | 		jmp MaxLoop
+                      | 	
+  0x0e6:              | Reverse:
+  0x0e6: a05f         | 		pushl %ebp
+  0x0e8: 2045         | 		rrmovl %esp, %ebp
+  0x0ea: 30f700000000 | 		irmovl $0, %edi		#set stack counter	
+  0x0f0:              | ReverseLoop:		
+                      | 		#check if eax points to done
+  0x0f0: 30f31c020000 | 		irmovl Done, %ebx	#check if eax points to Done
+  0x0f6: 6103         | 		subl %eax, %ebx
+  0x0f8: 30f20c040000 | 		irmovl ReverseResult, %edx
+  0x0fe: 7320010000   | 		je ReverseDone
+                      | 		#increment edi, put and push esi, loop
+                      | 
+  0x103: 30f301000000 | 		irmovl $1, %ebx
+  0x109: 6037         | 		addl %ebx, %edi
+  0x10b: 506000000000 | 		mrmovl (%eax), %esi
+  0x111: a06f         | 		pushl %esi
+  0x113: 30f304000000 | 		irmovl $4, %ebx
+  0x119: 6030         | 		addl %ebx, %eax
+  0x11b: 70f0000000   | 		jmp ReverseLoop
+  0x120:              | ReverseDone:
+                      | 
+                      | 		#if edi is greater than zero, decrement edi and return esi
+  0x120: 30f300000000 | 		irmovl $0, %ebx
+  0x126: 6037         | 		addl %ebx, %edi
+  0x128: 734a010000   | 		je Return
+                      | 
+  0x12d: 30f301000000 | 		irmovl $1, %ebx
+  0x133: 6137         | 		subl %ebx, %edi
+                      | 		
+  0x135: b06f         | 		popl %esi
+  0x137: 406200000000 | 		rmmovl %esi, (%edx)
+                      | 
+  0x13d: 30f304000000 | 		irmovl $4, %ebx
+  0x143: 6032         | 		addl %ebx, %edx
+  0x145: 7020010000   | 		jmp ReverseDone
+                      | 		
+  0x14a:              | Return:
+  0x14a: 90           | 		ret		
+                      | 
+  0x14b: 00           | Exit:		halt

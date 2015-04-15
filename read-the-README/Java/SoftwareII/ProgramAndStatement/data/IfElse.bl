@@ -1,0 +1,5 @@
+IF random THEN
+skip
+ELSE
+move
+END IF

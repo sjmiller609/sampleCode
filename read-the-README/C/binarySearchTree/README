@@ -1,0 +1,10 @@
+Author: Steven Miller
+date: 10/14
+
+NOTES:
+
+This is a simple program that takes in data from the user about books and calculates various things depending on what the user asks for. It stores the books in a binary search tree.
+
+This project shows that I can use data structures effectively and can organize multiple files into a single project.
+
+I wrote all the code myself.
