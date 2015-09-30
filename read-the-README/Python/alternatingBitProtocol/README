@@ -1,0 +1,7 @@
+fptc.py is the client
+ftps.py is the server
+troll.py simulates a lossy connection
+
+This project is an implementation of alternating bit protocol. It is a very simple, short project.
+
+This code was developed independently
