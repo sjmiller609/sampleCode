@@ -1,13 +1,22 @@
-Steven Miller
+Education Summary
 
+It's long: just read the //comments at the top of each paragraph
+Posts are in reverse chronological order.
 
-TLDR:
-I have organized some code I have written in this directory's subdirectories so that potential employers (or anyone) can get an idea of my progress.
-When you get into a directory, read the README, if one exists. They are not as long as this.
-The code I have written in C is most recent, and is therefore the most mature.
-I plan to update this file whenever I add some new code to this repo.
 -------------------------------------------
--------------------------------------------
+10/08/2015:
+
+I am looking for an internship / co-op for the Spring / Summer of 2016.
+
+//summer 2015
+	This summer I worked for Doc Halo, a company that provides a HIPAA-compliant communication platform for doctors. I worked with the dev team on site maintenance (MVC ASP .NET C#) and was also responsible for developing a Windows desktop application that notifies users when they have unread Doc Halo messages. I was given a beta version of the application that was developed in Windows Forms with Visual Basic and was told "we hate VB and this doesn't work. Make this C#". So I converted the application into C#, making changes to improve the stability and front-end of the application. Eventually, I realized that converting into C# was not what was really needed, we needed to use a different framework. So I ran it by the team and they agreed that I should switch the project over to Windows Presentation Foundation, which was far superior on the front-end. I converted the application to WPF, and added new authentication features for Single Sign On with SAML 2.0 which involved launching an embedded web browser and extracting information which was not conventionally available through the framework's very limited browser control. I liked working for Doc Halo because I had a lot of free reign over how to reach goals that were set for me. The work involved a lot of me figuring things out for the first time and testing software across different Windows platforms. I would be interested in experiencing a work environment where I develop more cooperatively with my peers.
+	At the same time, I was taking an online course in penetration testing, as mentioned below. I did not give the class the time it demanded to pass the examination, but it was still fun to learn about network security and Linux. I still plan to take the certification examination at a later date.
+
+//Autumn 2015 (in progress)
+	One thing I'm doing this semester is using Ruby on Rails for my web applications class. So far I love Ruby, it makes it so easy to get code up quickly. I also like how easily I can use Ruby with the Linux bash scripting environment that I'm already used to.
+	I'm setting up a website with my friend to sell Bitcoins locally.
+	I'm attending a bunch of hackathons / coding competitions.
+
 -------------------------------------------
 4/14/2015:
 
