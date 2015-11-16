@@ -14,6 +14,7 @@ IMPROVEMENTS:
 I would change the data structure to be a circular array. Right now the whole array is shifted down to put in a new entry, but it would be much better to use modular arithmetic to implement a circular array.
 
 Right now, duplicate entries are marked by setting the command number (which is the index of command history) to 0, then bubble sort is used to move them to the end of the array. I would use quick or merge sort to move duplicate entries to the next to be overwritten locations instead of bubble sort.
+EDIT 11/16/15: don't use non-randomized quicksort because the array is already mostly in order.
 
 I wrote all of the code myself from scratch except for the setup() method, which was provided.
 
