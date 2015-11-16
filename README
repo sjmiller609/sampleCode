@@ -10,6 +10,8 @@ History
 
 11/16/2015
 	added an interpreter written in python
+	added a web-scraping server in Ruby
+
 10/8/15
 	added one python project - tokenizer I just finished writing, added more to the education summay
 
