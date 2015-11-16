@@ -1,0 +1,34 @@
+Steven Miller
+
+how to run:
+	./interpreter.py <program file path> <data file path>
+
+the data file should be only ints and whitespace
+
+info:
+	I used an object oriented approach with an object for most end terminals
+
+interpreter.py				main file to execute
+README						this file
+bin/
+		assign.py			assign object
+		comparison.py		comparison object
+		condition.py		condition object
+		datastream.py		datastream object: for handling inputs
+		declaration.py		declaration object
+		declseq.py			.
+		elseobj.py			.
+		expression.py		.
+		factor.py			etc
+		idlist.py
+		id.py
+		ifobj.py
+		__init__.py			this file is to let python know you can import from this directory
+		input.py
+		operator.py
+		output.py
+		program.py
+		statement.py
+		statementseq.py
+		tokenizer.py
+		whileobj.py

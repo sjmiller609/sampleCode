@@ -1,0 +1,41 @@
+Steven Miller
+Code last changed: 10/8/15
+
+Independently developed
+
+This program contains the tokenizer class for an interpreter and a main function to demonstrate that it works.
+It doesn't output tokens. It output integers that were assigned to each type of token, one per line.
+
+COMING SOON: the rest of the interpreter
+
+how to run:
+	$./tokenizer.py <filename>
+
+you can try it on samplefile.txt
+
+
+if you want to try it on your own program, the CFG for the language is as follows:
+
+<prog>          ::= program <decl seq> begin <stmt seq> end
+<decl seq>      ::= <decl> | <decl> <decl seq>
+<stmt seq>      ::= <stmt> | <stmt> <stmt seq>
+<decl>          ::= int  <id list>;
+<id list>       ::= <id> | <id>, <id list>
+<stmt>          ::= <assign>|<if>|<loop>|<in>|<out>|<select>
+<assign>        ::= <id> = <exp>;
+<if>            ::= if <cond> then <stmt seq> end;
+                        |if <cond> then <stmt seq> else <stmt seq> end;
+<loop>          ::= while <cond> loop <stmt seq> end;
+<input>         ::= read <id list>;
+<output>        ::= write <id list>;
+<cond>          ::= <comp>|!<cond>
+                | [<cond> && <cond>] | [<cond> or <cond>]
+<comp>          ::= (<op> <comp op> <op>)
+<exp>           ::= <fac>|<fac>+<exp>|<fac>-<exp>
+<fac>           ::= <op> | <op> * <fac>
+<op>            ::= <int> | <id> | (<exp>)
+<comp op>       ::= != | == | < | > | <= | >=  
+<id>            ::= <let> | <let><id> | <let><int>
+<let>           ::= A | B | C | ... | X | Y | Z
+<int>           ::= <digit> | <digit><int>
+<digit>         ::= 0 | 1 | 2 | 3 | ... | 9

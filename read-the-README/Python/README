@@ -1,3 +1,6 @@
 Steven Miller
 
-These python sample(s) are from projects I wrote in my networking class. That class was the first time I wrote python code.
+alternating bit protocol I wrote in my networking class. That class was the first time I wrote python code. It doesn't account for out of order packets but does account for dropped packets.
+
+10/8
+tokenizer is a tokenizer for a language designed in "principles of programming languages"
