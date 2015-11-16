@@ -1,0 +1,22 @@
+{
+	"events": [
+		{
+			 "title":"CBE Seminar - Jennifer Wilcox",
+			 "timedate":"Nov 24, 2015 11:30 am",
+			 "desc":"",
+			 "dept":"cbe"
+		},
+		{
+			 "title":"CBE Seminar - Baolin Deng",
+			 "timedate":"Nov 19, 2015 11:30 am",
+			 "desc":"Designing Polymer-Matrix Nanocomposite Membranes for Water Treatment and Reuse",
+			 "dept":"cbe"
+		},
+		{
+			 "title":"Procter & Gamble Seminar: Characterization of Dense Granular Flow - Implications for Industrial Efficiency and Process Optimization",
+			 "timedate":"Nov 18, 2015 5:30 pm",
+			 "desc":"Speaker: Paul Mort, PhD",
+			 "dept":"cbe"
+		}
+	]
+}

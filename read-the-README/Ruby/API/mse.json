@@ -1,0 +1,28 @@
+{
+	"events": [
+		{
+			 "title":"MSE Senior Design Poster Session",
+			 "timedate":"Dec 9, 2015 4:00 pm",
+			 "desc":"Scott Labs E100, 4:00-6:00 p.m.",
+			 "dept":"mse"
+		},
+		{
+			 "title":"MSE Distinguished Alumnus Colloquium: Brent Adams, Structure-Property Relationships for Polycrystals: Twenty Five Years of Development of Automated electron Backscattered Diffreaction (EBSD) Methods",
+			 "timedate":"Nov 20, 2015 4:00 pm",
+			 "desc":"Emeritus Professor, Brigham Young University",
+			 "dept":"mse"
+		},
+		{
+			 "title":"MSE Seminar: Nikolas Antolin",
+			 "timedate":"Nov 18, 2015 4:00 pm",
+			 "desc":"",
+			 "dept":"mse"
+		},
+		{
+			 "title":"MSE Seminar: Jonathan Orsborn, Simulation of Solid-State Weld Microstructures Using Thermal and Thermo-Mechanical Exposures in Ti-5Al-2Sn-2Zr-4Cr-4Mo",
+			 "timedate":"Nov 16, 2015 4:00 pm",
+			 "desc":"PhD Candidate advised by Dr. Hamish Fraser",
+			 "dept":"mse"
+		}
+	]
+}

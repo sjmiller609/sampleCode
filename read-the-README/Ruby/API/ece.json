@@ -1,0 +1,22 @@
+{
+	"events": [
+		{
+			 "title":"IEEE Winter Banquet",
+			 "timedate":"Jan 30, 2016 7:00 pm to 11:00 pm",
+			 "desc":"",
+			 "dept":"ece"
+		},
+		{
+			 "title":"IEEE Distinguished Seminar Series",
+			 "timedate":"Nov 19, 2015 11:00 am to 12:00 pm",
+			 "desc":"Dr. Robert Boyd",
+			 "dept":"ece"
+		},
+		{
+			 "title":"CHPPE Guest Seminar",
+			 "timedate":"Nov 17, 2015 9:30 am to 11:00 am",
+			 "desc":"",
+			 "dept":"ece"
+		}
+	]
+}

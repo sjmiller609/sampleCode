@@ -1,0 +1,65 @@
+/*
+Created: 10/6 by Eric Yu
+Modifed: 10/6 by Eric Yu (Modified)
+Modified: 10/6 by Kevin Payravi (Adding some styling for button, font, and margins/padding)
+Modifed: 10/9 by Eric Yu (Removed unneeded information)
+*/
+
+body {
+	padding: 25px 0px 0px 25px;
+	font-family: "Verdana", Arial, sans-serif;
+}
+
+p {
+	text-align: center;
+}
+
+form {
+	text-align: left;
+	padding: 5px;
+}
+
+hr {
+	border-color: #BA2025;
+	margin: 20px 0px;
+}
+
+.heading h1 {
+	margin: 5px;
+}
+
+.heading h2 {
+	margin: 30px 0px 0px 0px;
+}
+
+h1 {
+	text-align: center;
+}
+
+#events h1 {
+	margin: 35px 0px 0px 0px;
+}
+
+h3 {
+	margin: 20px 0px 0px 0px;
+	font-size: 20px;
+}
+
+h4 {
+	margin: 0px;
+	font-size: 15px;
+	font-weight: normal;
+}
+
+#events p {
+	margin: 0px;
+	font-size: 15px;
+}
+
+.submit {
+	border: 0px solid;
+	margin: 10px 0px;
+	padding: 10px;
+	background: #BA2227;
+	color: #FFFFFF;
+}

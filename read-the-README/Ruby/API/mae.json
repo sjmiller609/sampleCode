@@ -1,0 +1,64 @@
+{
+	"events": [
+		{
+			 "title":"Columbus Day observed",
+			 "timedate":"Nov 27, 2015 11:45 pm",
+			 "desc":"no classes, offices closed",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Thanksgiving Day",
+			 "timedate":"Nov 26, 2015 11:45 pm",
+			 "desc":"no classes, offices closed",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Dissertation Defense: Assessment of Nonlinear Damping Elements for Vibro-Impacts in Automotive Torsional Systems with Discontinuous Nonlinearities ",
+			 "timedate":"Nov 23, 2015 12:00 pm",
+			 "desc":"Almahdi Saleh, PhD Candidate, Mechanical Engineering",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Seminar: Overview of the Experimental and Computational Turbomachinery Dynamics Research at the Gas Turbine Laboratory",
+			 "timedate":"Nov 20, 2015 3:00 pm",
+			 "desc":"Dr. Kiran D'Souza, The Ohio State University",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Dissertation Defense: Development and Characterization of a Scalable Self-Sensing Actuator with Surgical Applications ",
+			 "timedate":"Nov 20, 2015 9:30 am",
+			 "desc":"Santhosh Behera, PhD Candidate, Mechanical Engineering",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Thesis Defense: Development of Gamma Spectroscopic Methods for Determining Radium Concentrations in Hydraulic Fracturing Waste Products ",
+			 "timedate":"Nov 19, 2015 1:00 pm",
+			 "desc":"Curtis Brown, Master's Candidate, Nuclear Engineering",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Dissertation Defense: Fabrication, Characterization, and Measurement of the Electron-Hole Pair Creation Energy of Gallium Nitride Schottky Diode Detectors ",
+			 "timedate":"Nov 17, 2015 2:30 pm",
+			 "desc":"Padhraic Mulligan, PhD Candidate, Nuclear Engineering",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Dissertation Defense: Electric Field Measurements in Non-Equilibrium Electric Discharge Plasmas Using Picosecond Four Wave Mixing ",
+			 "timedate":"Nov 17, 2015 10:00 am",
+			 "desc":"Benjamin Goldberg, PhD Candidate, Mechanical Engineering",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Seminar: Wave-Driven Processes in Electric Propulsion Devices",
+			 "timedate":"Nov 17, 2015 9:00 am",
+			 "desc":"Dr. Benjamin Jorns, NASA Jet Propulsion Laboratory",
+			 "dept":"mae"
+		},
+		{
+			 "title":"Dissertation Defense: Low-Frequency Flow Oscillations on Stalled Wings Exhibiting Cellular Separation Topology ",
+			 "timedate":"Nov 16, 2015 2:00 pm",
+			 "desc":"Kevin Disotell, PhD Candidate, Aerospace Engineering",
+			 "dept":"mae"
+		}
+	]
+}

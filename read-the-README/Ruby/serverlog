@@ -1,0 +1,42 @@
+2015-10-06 18:14:58 -0400	GET /API/* HTTP/1.1
+
+2015-10-06 18:14:58 -0400	404 sent to client
+2015-10-06 18:15:01 -0400	GET /API/cse HTTP/1.1
+
+2015-10-06 18:15:01 -0400	404 sent to client
+2015-10-06 18:15:08 -0400	GET / HTTP/1.1
+
+2015-10-06 18:15:08 -0400	sent ./index.html to client
+2015-10-06 18:15:13 -0400	GET /API HTTP/1.1
+
+2015-10-06 18:15:13 -0400	404 sent to client
+2015-10-06 18:15:16 -0400	GET /API/cse HTTP/1.1
+
+2015-10-06 18:15:16 -0400	404 sent to client
+2015-10-06 18:15:33 -0400	sent ./API/cse.json to client
+2015-10-06 18:15:33 -0400	GET /API/cse.json HTTP/1.1
+
+2015-10-06 18:15:43 -0400	GET /API/cse.json HTTP/1.1
+
+2015-10-06 18:15:43 -0400	sent ./API/cse.json to client
+2015-11-16 15:29:49 -0500	sent ./jsonProcessor.js to client
+2015-11-16 15:29:49 -0500	GET /favicon.ico HTTP/1.1
+
+2015-11-16 15:29:49 -0500	404 sent to client
+2015-11-16 15:29:54 -0500	GET /API/bme.json HTTP/1.1
+
+2015-11-16 15:29:54 -0500	sent ./API/bme.json to client
+2015-11-16 15:29:57 -0500	GET /API/bme.json HTTP/1.1
+
+2015-11-16 15:29:57 -0500	sent ./API/bme.json to client
+2015-11-16 15:29:57 -0500	GET /API/cbe.json HTTP/1.1
+
+2015-11-16 15:29:57 -0500	sent ./API/cbe.json to client
+2015-11-16 15:29:49 -0500	GET / HTTP/1.1
+
+2015-11-16 15:29:49 -0500	sent ./index.html to client
+2015-11-16 15:29:49 -0500	GET /style.css HTTP/1.1
+
+2015-11-16 15:29:49 -0500	sent ./style.css to client
+2015-11-16 15:29:49 -0500	GET /jsonProcessor.js HTTP/1.1
+

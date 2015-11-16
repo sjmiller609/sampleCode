@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<!--
+Created: 10/4 by Eric Yu
+Modified 10/4 by Kevin Payravi (Adding Angular Hooks / Indent fixes)
+Modified 10/5 by Kevin Payravi (Linking to JavaScript file and Angular / Indent fixes)
+Modified 10/6 by Kevin Payravi (Setting checkboxes to checked by default)
+Modified 10/6 by Eric Yu (Added CSS stylesheet)
+Modified 10/6 by Eric Yu (Added button to form)
+Modified 10/7 by Kevin Payravi (Adjusted form / Adjusted events div to work with jsonProcessor.js / Expanded description / Some styling)
+Modified 10/9 by Eric Yu (Removed unneeded information)
+-->
+<html lang="en">
+	<head>
+		<title>Event Calendar</title>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" type="text/css" href="style.css" />
+	</head>
+
+	<body>
+		<div class="heading">
+			<h1>Event Calendar</h1>
+			<p>A list of upcoming events from Ohio State's engineering departments.</p>
+			<hr />		
+			<h2>Select Calendars to Show:</h2>
+			<form>
+				<label><input id="bme" type="checkbox" />
+				Biomedical Engineering</label> <br />
+				<label><input id="cbe" type="checkbox" />
+				Chemical and Biomolecular Engineering</label> <br />
+				<label><input id="cse" type="checkbox" />
+				Computer Science and Engineering</label> <br />
+				<label><input id="ece" type="checkbox" />
+				Electrical and Computer Engineering</label> <br />
+				<label><input id="mae" type="checkbox" />
+				Mechanical and Aerospace Engineering</label> <br />
+				<label><input id="mse" type="checkbox" />
+				Materials Science and Engineering</label> <br />
+				<input class="submit" type="button" onclick="getData()" value="Submit"></input>
+			</form>
+		</div>
+		<hr />
+		<div id="events" />
+	</body>
+	<script src="jsonProcessor.js"></script>
+</html>

@@ -1,0 +1,28 @@
+{
+	"events": [
+		{
+			 "title":"BME Seminar Series: Dr. Andrew McKinley, Wright-Patterson  Air Force Base",
+			 "timedate":"Feb 19, 2016 1:30 pm to 2:30 pm",
+			 "desc":"",
+			 "dept":"bme"
+		},
+		{
+			 "title":"Autumn 2015 Commencement ",
+			 "timedate":"Dec 20, 2015 2:00 pm",
+			 "desc":"",
+			 "dept":"bme"
+		},
+		{
+			 "title":"BME Seminar Series: Ph.D Candidates David Gross, Samuel Ting, and Mingrui Sun",
+			 "timedate":"Dec 4, 2015 1:30 pm to 2:30 pm",
+			 "desc":"",
+			 "dept":"bme"
+		},
+		{
+			 "title":"BME Seminar Series: Jeffrey W. Ruberti, Ph.D., Northeastern University",
+			 "timedate":"Nov 20, 2015 1:30 pm to 2:30 pm",
+			 "desc":"",
+			 "dept":"bme"
+		}
+	]
+}
