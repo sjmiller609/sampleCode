@@ -3,6 +3,7 @@ Steven Miller
 how to run:
 	./interpreter.py <program file path> <data file path>
 
+the context free grammar for the language is included in ./../tokenizer/README
 the data file should be only ints and whitespace
 
 info:
