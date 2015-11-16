@@ -145,7 +145,7 @@ for i in 0...numurls
 end
 
 server = TCPServer.new('localhost',1337)
-puts "ready for client connections!"
+puts "ready for client connections! localhost:1337"
 
 # https://practicingruby.com/articles/implementing-an-http-file-server
 # Above url used as reference for http response
