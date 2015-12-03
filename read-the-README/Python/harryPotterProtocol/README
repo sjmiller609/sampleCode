@@ -1,0 +1,13 @@
+steven miller
+
+Harry Potter protocol is in reference to Hogwarts' repeated, escalating-on-failure packet delivery system
+
+just run
+%ftps.py 5553
+on one machine, then
+%troll.py 5554 <between 0 and 100> &      (0 to 100 is percent packet loss)
+and
+%ftpc.py <ip printed out at server> 5553 5554 test.jpg
+on a different machine.
+
+be patient on lossy connection, the last few packets might take a sec to get across.
