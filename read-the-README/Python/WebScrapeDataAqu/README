@@ -1,0 +1,20 @@
+this script alerts the user when items of a certain type are sold from any CVS near a location.
+
+My buddy and I were thinking about designing some vending machines that have a very large selection. Basically we were thinking about staff-less, low-cost, drive-thru mini-marts
+This script is the result of my looking around CVS' website to see what sort of business data might be useful.
+
+It takes 3 input parameters, <item> <location> <item count>
+	item: any item description, this will be sent to CVS' product search and will it will scrape <item count> product IDs from the results
+	location: the script will check for inventory near this location. any location you could put in google maps should work
+	item count: how many product IDs to get
+
+this script only uses publicly available data and limits request rate: legal and not intrusive!
+	although I did have to look at server response data to discover that inventory values are leaked for all items in all CVS locations
+	kind of seems like a bad idea to leak that info considering that this could hypothetically be used by a competitor to track all store sales of all items
+
+limitations:
+
+cannot alert user for any item sold in a region, can only check by search keyword or specific item (using skuid as <item> argument)
+precision of time sold is traded off with number of items scanned
+iterates through items checking their availability in store, lets you know when inventory amount changes
+this script is not very robust against failure and also is not very well organized, but that's ok since I am the only user and developer
