@@ -9,6 +9,8 @@ History
 ------------------------------------------------------
 2/11/16
 	added multithreaded matrix mutliplication from spring 15
+2/2/16
+	added python web scraper: collects real-time inventory and sales data from CVS
 12/03/15
 	added an python file transfer protocol I wrote in spring 2015
 11/16/2015
