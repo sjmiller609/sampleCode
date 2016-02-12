@@ -1,7 +1,7 @@
 This project is still in progress.
 	timer-process.c implements a delta-timer
 	tcpd.c was just a start to getting organized
-	everything else is not going to be part of te final result probably
+	everything else is not going to be part of the final result, probably
 
 Steven Miller.5252
 lab 3
