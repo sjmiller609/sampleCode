@@ -22,6 +22,9 @@ There is also a detailed summary of my education in this directory.
 
 # History
 
+### 2/12/16
+* added TCP implemented with UDP project, still in progress
+
 ### 2/11/16
 * added multithreaded matrix mutliplication from spring 15
 

@@ -1,0 +1,31 @@
+This project is still inprogress.
+	timer-process.c implements a delta-timer
+	tcpd.c was just a start to getting organized
+	everything else is not going to be part of te final result probably
+
+Steven Miller.5252
+lab 3
+
+to run the program:
+
+compile with:
+$ make 
+
+then, in one shell check the local ip address using 
+$ hostname -i
+
+the output is the server ip (remote-ip in the next part). then, do
+
+$ tcpd server &
+$ ftps
+
+in a separate shell, on a differnt machine run
+$ troll 1338 -x 0 &
+$ tcpd <ip from other shell> &
+$ ftpc <file to transfer>
+
+the output file will end up here: ./recv/<local-file-to-transfer>
+
+ftps.c is the server side code
+ftpc.c is the client side code
+tcpd.c is the daemon
