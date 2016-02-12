@@ -3,7 +3,7 @@
 ## post 2/11/16:
 
 New plan: taking classes in the summer and graduating August 7, 2016.
-I am actively seeking employment for the Autumn. I'm looking for something educational.
+I am actively seeking employment for the autumn. I'm looking for something educational.
 Areas of most interest:
 *	systems programming
 *	network programming
