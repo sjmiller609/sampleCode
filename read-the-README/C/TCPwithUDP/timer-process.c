@@ -1,3 +1,4 @@
+//DOUBLE LINKED LIST LIST IMPLEMENTATION OF DELTA TIMER
 //Delta-list implementaion for timer this process receives on a port a packet indicating amount of time and a port to respond to
 //incoming packet UDP data: time (32 bits), seqnum (32 bits), port num to respond to (32 bits)
 //send packet data: seqnum (32 bits)
@@ -45,8 +46,8 @@ int insert(struct Dnode* insertme){
 }
 //returns -1 if invalid port number
 //otherwise returns the port number
-int portNum(char port[])
-{
+int portNum(char port[]){
+
 	int i = 0;
 	//checking for negative numbers
 	if (port[0] == '-') return false;
@@ -76,5 +77,6 @@ int main(int argc, char* argv[]){
 	dummyback.next = NULL;
 	front = &dummyfront;
 	back = &dummyback;
+	//TODO: recv from port, set up select logic appropriately
 }
 
