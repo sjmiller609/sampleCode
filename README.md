@@ -12,7 +12,7 @@ There is also a detailed summary of my education in this directory.
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/harryPotterProtocol">"Harry Potter" Protocol</a>: not very nice to the network (Python)
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/WebScrapeDataAqu">Business Intelligence</a>: reports sales data of CVS (Python)
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Ruby">HTTP Server</a>: minimal server in Ruby
-	- TCP implemented with UDP in C coming soon!
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/C/TCPwithUDP">TCP implemented with UDP</a>: work in progress
 * **System programming samples**
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/C/matrix_mult">Matrix Multiplication</a>: using POSIX threads in C
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Assembly/y86">Assembly Programming</a>: a simple little Y86 assembly program
