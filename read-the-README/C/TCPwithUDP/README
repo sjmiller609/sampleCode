@@ -1,4 +1,4 @@
-This project is still inprogress.
+This project is still in progress.
 	timer-process.c implements a delta-timer
 	tcpd.c was just a start to getting organized
 	everything else is not going to be part of te final result probably
