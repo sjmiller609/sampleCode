@@ -5,6 +5,21 @@ I have organized some code I have written in this directory's subdirectories so 
 
 There is also a detailed summary of my education in this directory.
 
+# Favorites
+
+* **Network programming samples**
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/alternatingBitProtocol">Alternating Bit Protocol</a>: Python
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/harryPotterProtocol">"Harry Potter" Protocol</a>: not very nice to the network (Python)
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/WebScrapeDataAqu">Business Intelligence</a>: reports sales data of CVS (Python)
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Ruby">HTTP Server</a>: minimal server in Ruby
+	- TCP implemented with UDP in C coming soon!
+* **System programming samples**
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/C/matrix_mult">Matrix Multiplication</a>: using POSIX threads in C
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Assembly/y86">Assembly Programming</a>: a simple little Y86 assembly program
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/C/multithreading">Producer / Consumer</a>: C
+* **Object Oriented**
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/interpreter">Interpreter</a>: an interpreter written in Python
+
 # History
 
 ### 2/11/16
