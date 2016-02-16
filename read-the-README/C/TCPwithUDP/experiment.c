@@ -24,23 +24,16 @@ int createThread(int* xptr){
 	}
 	return 0;
 }
+int statictest(){
+	static int test = 100;
+	test++;
+	return test;
+}
 int main()
 {
-	/* wait for the second thread to finish */
-	int x;
-	int y;
-	createThread(&x);
-	/* increment y to 100 in the first thread */
-	while(++y < 100);
-	printf("y increment finished\n");
-/*
-	if(pthread_join(inc_x_thread, NULL)) {
-		fprintf(stderr, "Error joining thread\n");
-		return 2;
+	int i = 0;
+	for(;i<10;i++){
+	printf("%d\n",statictest());
 	}
-*/
-	/* show the results - x is now 100 thanks to the second thread */
-	sleep(2);
-	printf("x: %d, y: %d\n", x, y);
 	return 0;
 }

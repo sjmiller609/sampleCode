@@ -1,14 +1,14 @@
-ALL = tcpd ftps ftpc
+ALL = tcpd ftps ftpc timer-process
 
 all: $(ALL)
 
 clean: 
 	rm -f *.o $(ALL)
-tcpd: tcpd.c
-	gcc -o tcpd tcpd.c
 ftps: ftps.c
 	gcc -o ftps ftps.c
 ftpc: ftpc.c
 	gcc -o ftpc ftpc.c
+timer-process: timer-process.c
+	gcc -o timer-process timer-process.c
 experiment: experiment.c
 	gcc experiment.c -o experiment -lpthread

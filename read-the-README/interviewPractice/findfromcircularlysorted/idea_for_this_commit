@@ -1,0 +1,12 @@
+assuming the array is loaded in memory and we have the size of the array:
+
+the array is circularly sorted, let's find where the lowest value is
+	can do this is log(n) with a binary search
+
+then, determine which direction the array is going
+	this should take C
+
+then, find integer with binary search
+
+this should result in a program of asymptotic complexity log(n)
+ideas for improvements: there is probably a way to implement the find lowest and find integer in the same algorithm, and it will be clear when I've got this part
