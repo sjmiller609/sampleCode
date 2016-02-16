@@ -1,4 +1,3 @@
-//TODO: fix run-time bugs
 //DOUBLE LINKED LIST LIST IMPLEMENTATION OF DELTA TIMER
 //Delta-list implementaion for timer this process receives on a port a packet indicating amount of time and a port to respond to
 //incoming packet UDP data: time (32 bits), seqnum (32 bits), port num to respond to (32 bits)
@@ -18,6 +17,7 @@ struct Dnode{
 	struct Dnode* next;
 	struct Dnode* prev;
 };
+
 //pointers to the two dummy nodes at front / back of doubly linked list
 struct Dnode* front;
 struct Dnode* back;
@@ -112,6 +112,7 @@ int timerbuzz(){
 //otherwise returns the port number
 int portNum(char port[]){
 
+	//printf("checking if %s is valid port num\n",port);
 	int i = 0;
 	//checking for negative numbers
 	if (port[0] == '-') return -1;
@@ -120,15 +121,27 @@ int portNum(char port[]){
 	}
 	i = atoi(port);
 	if(i < 1024 || i > 65525) return -1;
-	return atoi(port);
+	//printf("returning %d\n",i);
+	return i;
 }
 
+void print_bytes(const void *object, size_t size)
+{
+  size_t i;
+
+  printf("[ ");
+  for(i = 0; i < size; i++)
+  {
+    printf("%02x ", ((const unsigned char *) object)[i] & 0xff);
+  }
+  printf("]\n");
+}
 int main(int argc, char* argv[]){
 	//socket to output with
 	outsock = socket(AF_INET,SOCK_DGRAM,0);
-	int port;
+	int port = portNum(argv[1]);
 	//get port from input, make sure it's valid and suck
-	if(argc < 2 || (port = portNum(argv[1])<0 )){
+	if(argc < 2 || port<0 ){
 		fprintf(stderr,
 		"timer-process failed to start: invalid port number\n");
 		return -1;
@@ -158,8 +171,9 @@ int main(int argc, char* argv[]){
 
 	/* create name with parameters and bind name to socket */
 	name.sin_family = AF_INET;
+	printf("port = %d\n",port);
 	name.sin_port = htons(port);
-	name.sin_addr.s_addr = htons(INADDR_ANY);
+	name.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 	if(bind(sock, (struct sockaddr *)&name, sizeof(name)) < 0) {
 		perror("error binding socket\n");
 		exit(2);
@@ -168,7 +182,7 @@ int main(int argc, char* argv[]){
 	fd_set fds;
 	int n;
 	struct timeval waittime;
-	int buffer[3];
+	uint32_t buffer[3];
 
 	// Set up the file descriptor set.
 	FD_ZERO(&fds);
@@ -181,7 +195,9 @@ int main(int argc, char* argv[]){
 		//set up wait to be the amout of time until the next node should be expired
 		waittime.tv_usec = (front->next->dtime-waittime.tv_sec*1000)*10;
 		// Wait until timeout or data received.
+		printf("waiting on port %d\n",ntohs(name.sin_port));
 		n = select(sock+1, &fds, NULL, NULL, &waittime);
+		printf("select returned %d\n",n);
 		if (n == 0 && front->next != back){//timeout
 				if(timerbuzz()){
 					fprintf(stderr,"timerbuzz failed\n");
@@ -200,8 +216,9 @@ int main(int argc, char* argv[]){
 				return -1;
 			}
 			int recvd = 0;
-			recvd = recvfrom(sock,(void*)buffer, sizeof(int)*3, 0, NULL, NULL);
-			if (recvd != sizeof(int)*3){
+			recvd = recvfrom(sock,(void*)buffer, sizeof(uint32_t)*3, 0, NULL, NULL);
+			print_bytes(buffer,sizeof(buffer));
+			if (recvd != sizeof(uint32_t)*3){
 				fprintf(stderr,"did not recv amout of bytes expected.\n");
 				return -1;
 			}
@@ -210,6 +227,8 @@ int main(int argc, char* argv[]){
 			new.dtime = ntohl(buffer[0]);
 			new.seqnum = ntohl(buffer[1]);
 			new.portnum = ntohl(buffer[2]);
+			printf("received %d msec,%d seqnum,%d portnum\n",
+					new.dtime, new.seqnum, new.portnum);
 
 			//check for exit
 			if(new.dtime < 0){
