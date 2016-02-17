@@ -1,4 +1,4 @@
-ALL = tcpd ftps ftpc timer-process
+ALL = ftps ftpc timer-process
 
 all: $(ALL)
 
