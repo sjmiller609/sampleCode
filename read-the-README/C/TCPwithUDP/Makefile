@@ -12,3 +12,5 @@ timer-process: timer-process.c
 	gcc -o timer-process timer-process.c
 experiment: experiment.c
 	gcc experiment.c -o experiment -lpthread
+crc-test: crc.h crc-test.c
+	gcc -o crc-test crc-test.c

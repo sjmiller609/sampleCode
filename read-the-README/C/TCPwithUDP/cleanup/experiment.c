@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdio.h>
+#define CHECK_BIT(var,pos) ((var) &(1<<(pos)))
 
 /* this function is run by the second thread */
 void *inc_x(void *x_void_ptr)
@@ -31,9 +32,26 @@ int statictest(){
 }
 int main()
 {
-	int i = 0;
+/*
 	for(;i<10;i++){
 	printf("%d\n",statictest());
 	}
+*/
+	char test[4];
+	test[0] = (char)0xfa;
+	test[1] = (char)0x0a;
+	test[2] = (char)0x0a;
+	test[3] = '\0';
+	//printf("0000 1010\n");
+	int i = 0;
+	for(;i<8;i++){
+		if(test[0] & (1 << i)){
+			 printf("1");
+		}else{
+			 printf("0");
+		}
+	}
+	printf("\n");
+	
 	return 0;
 }
