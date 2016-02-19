@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <time.h>
 
 struct Dnode{
 	int dtime;
@@ -44,6 +45,26 @@ int print_dtime(){
 	if(i != nodecount){
 		fprintf(stderr,"counted %d elements, but should be %d\n",i,nodecount);
 		return -1;
+	}
+	return 0;
+}
+
+//subtract milliseconds from the timer list
+int subtractTime(int msec){
+	struct Dnode* current = front->next;
+	while(msec>0){
+		if(current!=back){
+			if(msec > current->dtime){
+				msec -= current->dtime;
+				current->dtime = 0;
+				current = current->next;
+			}else{
+				current->dtime -= msec;
+				msec = 0;
+			}
+		}else{
+			msec = 0;
+		}
 	}
 	return 0;
 }
@@ -176,45 +197,51 @@ void swapNodes(struct Dnode* A,struct Dnode* B){
 	return;
 }
 //removes the expired node from doubly linked list and stack
-int timerbuzz(){
+int removeExpired(){
 	if(verbose){
 		printf("\tdeleting node, order before:\n");
 		if(print_dtime()) return -1;
 	}
-	//pointer to mem location of removing node
-	struct Dnode* remove_me = front->next;
-	struct Dnode* last_inserted = &(nodes[nodecount -1]);
-	//send buzzer message
-	if(sendmessage(remove_me->seqnum,remove_me->portnum)!=sizeof(uint32_t)){
-		fprintf(stderr,"failed to send buzzer message\n");
+	if(front->next->dtime < 0){
+		fprintf(stderr,"oops! a node has negative time: %d\n",front->next->dtime);
 		return -1;
 	}
-	//move remove_me to last spot in stack
-	swapNodes(remove_me,last_inserted);
-	//remove node from dll
-	front->next->next->prev = front;
-	front->next = front->next->next;
-
-	//indicate node removed in node stack
-	nodecount--;
-	//potentially free some space in the nodes stack
-	if(nodecount*sizeof(struct Dnode)*2 < sizeofnodes){
-		if(verbose)
-		printf("\t\thalving table current size %d\n",sizeofnodes);
-		nodes = realloc(nodes,sizeofnodes/2);
-		if(nodes == NULL){
-			fprintf(stderr,"could not realloc, probably out of memory\n");
+	while(!(front->next->dtime)){
+		//pointer to mem location of removing node
+		struct Dnode* remove_me = front->next;
+		struct Dnode* last_inserted = &(nodes[nodecount -1]);
+		//send buzzer message
+		if(sendmessage(remove_me->seqnum,remove_me->portnum)!=sizeof(uint32_t)){
+			fprintf(stderr,"failed to send buzzer message\n");
 			return -1;
 		}
-		front = &(nodes[0]);
-		back = &(nodes[1]);
-		sizeofnodes = sizeofnodes/2;
-		if(verbose)
-		printf("\t\tdone. current size %d\n",sizeofnodes);
-	}
-	if(verbose){
-		printf("\torder after:\n");
-		if(print_dtime()) return -1;
+		//move remove_me to last spot in stack
+		swapNodes(remove_me,last_inserted);
+		//remove node from dll
+		front->next->next->prev = front;
+		front->next = front->next->next;
+
+		//indicate node removed in node stack
+		nodecount--;
+		//potentially free some space in the nodes stack
+		if(nodecount*sizeof(struct Dnode)*2 < sizeofnodes){
+			if(verbose)
+			printf("\t\thalving table current size %d\n",sizeofnodes);
+			nodes = realloc(nodes,sizeofnodes/2);
+			if(nodes == NULL){
+				fprintf(stderr,"could not realloc, probably out of memory\n");
+				return -1;
+			}
+			front = &(nodes[0]);
+			back = &(nodes[1]);
+			sizeofnodes = sizeofnodes/2;
+			if(verbose)
+			printf("\t\tdone. current size %d\n",sizeofnodes);
+		}
+		if(verbose){
+			printf("\torder after:\n");
+			if(print_dtime()) return -1;
+		}
 	}
 	return 0;
 }
@@ -234,11 +261,13 @@ int portNum(char port[]){
 }
 
 int main(int argc, char* argv[]){
-	//socket to output with
-	outsock = socket(AF_INET,SOCK_DGRAM,0);
+	if(argc < 2){
+		fprintf(stderr,
+		"%s <port number to listen>\n",argv[0]);
+		return -1;
+	}
 	int port = portNum(argv[1]);
-	//get port from input, make sure it's valid and suck
-	if(argc < 2 || port<0 ){
+	if(port<0){
 		fprintf(stderr,
 		"timer-process failed to start: invalid port number\n");
 		return -1;
@@ -249,12 +278,13 @@ int main(int argc, char* argv[]){
 		printf("using verbose mode, this makes the timer less accurate.\n");
 		verbose = 1;
 	}
+	//socket to output with
+	outsock = socket(AF_INET,SOCK_DGRAM,0);
 	//intitialize doubly linked list to implement delta-timer
 	//using two dummy nodes
 	nodes = (struct Dnode*) malloc(2*sizeof(struct Dnode));
 	sizeofnodes = 2*sizeof(struct Dnode);
 	nodecount = 2;
-
 	front = &(nodes[0]);
 	back = &(nodes[1]);
 	front->next = back;
@@ -262,10 +292,8 @@ int main(int argc, char* argv[]){
 	back->prev = front;
 	back->next = NULL;
 	back->dtime = INT_MAX;
-
 	int sock;
 	struct sockaddr_in name;
-
 	/*create socket*/
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock < 0) {
@@ -288,9 +316,13 @@ int main(int argc, char* argv[]){
 	struct timeval waittime;
 	uint32_t buffer[3];
 
-
+	/*
+	uint64_t diff;
+	struct timespec start,end;
+	clock_gettime(CLOCK_REALTIME,&start);
+	*/
 	while(1){
-		if(verbose) printf("\n");
+	/*	//may be useful for debugging later
 		if(front != &(nodes[0])){
 			fprintf(stderr,"oops! address of front changed\n");
 			return -1;
@@ -309,45 +341,47 @@ int main(int argc, char* argv[]){
 			"oops! front->next is back when it's not supposed to be.\n");
 			return -1;
 		}
-		// Set up the struct timeval for the timeout.
-		//set up wait to be the amout of time until 
-		//    the next node should be expired
-		waittime.tv_sec = (front->next->dtime)/1000;
-		waittime.tv_usec = (front->next->dtime-waittime.tv_sec*1000)*1000;
-
-		//if(front->next == back) printf("no nodes to wait on\n");
-		if(verbose) printf("front->next->dtime time is %d msec, waiting...\n",
-				front->next->dtime);
-		//printf("waiting on port %d\n",ntohs(name.sin_port));
-		// Wait until timeout or data received.
+	*/
+		
 		// Set up the file descriptor set.
 		FD_ZERO(&fds);
 		//add "sock" to reading set for select
 		FD_SET(sock, &fds);
+		
+		// Wait until timeout or data received.
+		/*
+		clock_gettime(CLOCK_REALTIME,&end);
+		diff = 1000000000L*(end.tv_sec-start.tv_sec)+end.tv_nsec-start.tv_nsec;
+		subtractTime((int)(diff/1000000));
+		*/
+		// Set up the struct timeval for the timeout.
+		waittime.tv_sec = (front->next->dtime)/1000;
+		waittime.tv_usec = (front->next->dtime-waittime.tv_sec*1000)*1000;
+		if(verbose) printf("\nfront->next->dtime time is %d msec, waiting...\n",
+				front->next->dtime);
 		n = select(sock+1, &fds, NULL, NULL, &waittime);
+		//clock_gettime(CLOCK_REALTIME,&start);
+
 		if (n == 0 && front->next != back){//timeout
-				if(verbose) printf("select timed out: buzz timer\n");
-				if(timerbuzz()){
-					fprintf(stderr,"timerbuzz failed\n");
+				if(verbose) printf(
+				"select timed out: subtracting time from list\n");
+				front->next->dtime = 0;
+				if(removeExpired()){
+					fprintf(stderr,"failed to remove expired\n");
 					return -1;
 				}
-
 		}else if(n == -1){//error
 			printf("select returned -1\n");
 			return 1;   
 	
-		}else{//ready to read
+		}else{//ready to read: inserting
 			if(verbose) 
 			printf("select indicated ready to read, left: %d sec %d usec\n",
 					waittime.tv_sec,waittime.tv_usec);
 			//decrement front to be appropriate amount of time left
-			if(front->next != back)
-			//set to amount of time not slept
+			if(front->next!=back)
 			front->next->dtime = waittime.tv_sec*1000 + waittime.tv_usec/1000;
-			if(front->next->dtime < 0){
-				fprintf(stderr,"oops! subracted too much time\n");
-				return -1;
-			}
+
 			int recvd = 0;
 			//printf("reading...\n");
 			recvd = recvfrom(sock,(void*)buffer, sizeof(uint32_t)*3, 0, NULL, NULL);
@@ -377,7 +411,6 @@ int main(int argc, char* argv[]){
 				fprintf(stderr,"failed to insert new node\n");
 				return -1;
 			}
-	
 		}
 	}
 }

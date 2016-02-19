@@ -26,7 +26,7 @@ if len(sys.argv) < 3:
 packnum = int(sys.argv[2])
 waittimes = [None]*packnum
 for i in range(0,packnum):
-	waittimes[i] = randint(1,5000)
+	waittimes[i] = randint(1000,5000)
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = int(sys.argv[1])
@@ -40,14 +40,16 @@ for i in range(0,packnum):
 	MESSAGE = pack('!iii',waittimes[i],i,1234)
 	sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
 	senttimes[i] = int(1000*(times()[4]))
-	sleep(1.0/1000)
+	sleep(1.0/1000.0)
 	
 listener.join()
 
 actualwaits = [None]*packnum
 avg = 0
+diffs = [None]*packnum
 for i in range(0,packnum):
 	actualwaits[i] = returntimes[i]-senttimes[i]
+	diffs[i] = actualwaits[i] - waittimes[i]
 	avg +=  actualwaits[i] - waittimes[i]
 avg=avg/packnum
 	
@@ -56,5 +58,7 @@ print("expected waits")
 print(waittimes)
 print("experimental waits")
 print(actualwaits)
+print("differences")
+print(diffs)
 print("average difference between expected and experiemental (msec)")
 print(avg)
