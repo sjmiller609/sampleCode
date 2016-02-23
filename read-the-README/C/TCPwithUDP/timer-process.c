@@ -37,7 +37,12 @@ int print_dtime(){
 	printf("\t");
 	int i = 2;
 	while(current != back){
-		printf("%d, ",current->dtime);
+		if(current->next == current){
+			fprintf(stderr,"seqnum %d next is itself\n");
+			return -1;
+		}
+		
+		printf("[dtime: %d, seqnum: %d],",current->dtime,current->seqnum);
 		current = current->next;
 		i++;
 	}
@@ -209,7 +214,7 @@ int removeExpired(){
 	while(!(front->next->dtime)){
 		//pointer to mem location of removing node
 		struct Dnode* remove_me = front->next;
-		struct Dnode* last_inserted = &(nodes[nodecount -1]);
+		struct Dnode* last_inserted = &(nodes[nodecount-1]);
 		//send buzzer message
 		if(sendmessage(remove_me->seqnum,remove_me->portnum)!=sizeof(uint32_t)){
 			fprintf(stderr,"failed to send buzzer message\n");
@@ -245,6 +250,27 @@ int removeExpired(){
 	}
 	return 0;
 }
+void deleteNode(int seqnum){
+	struct Dnode* current = front->next;
+	struct Dnode* last_inserted = &(nodes[nodecount -1]);
+	while(current!=back){
+		if(current->seqnum == seqnum){
+			swapNodes(current,last_inserted);
+			current = last_inserted;
+			if(verbose){
+				printf("deleting: dtime = %d, seqnum = %d\n",
+				current->dtime,current->seqnum);
+			}
+			current->prev->next = current->next;
+			current->next->prev = current->prev;
+			if(current->next != back)
+			current->next->dtime += current->dtime;
+			nodecount--;
+			break;
+		}
+		current = current->next;
+	}
+}
 //returns -1 if invalid port number
 //otherwise returns the port number
 int portNum(char port[]){
@@ -275,7 +301,7 @@ int main(int argc, char* argv[]){
 	if(argc == 3 &&
 	 (!strcmp(argv[2],"-v") || !strcmp(argv[2],"--verbose"))
 	){
-		printf("using verbose mode, this makes the timer less accurate.\n");
+		printf("using verbose mode.\n");
 		verbose = 1;
 	}
 	//socket to output with
@@ -292,6 +318,7 @@ int main(int argc, char* argv[]){
 	back->prev = front;
 	back->next = NULL;
 	back->dtime = INT_MAX;
+	back->seqnum = 1337;
 	int sock;
 	struct sockaddr_in name;
 	/*create socket*/
@@ -316,11 +343,9 @@ int main(int argc, char* argv[]){
 	struct timeval waittime;
 	uint32_t buffer[3];
 
-	/*
 	uint64_t diff;
 	struct timespec start,end;
 	clock_gettime(CLOCK_REALTIME,&start);
-	*/
 	while(1){
 	/*	//may be useful for debugging later
 		if(front != &(nodes[0])){
@@ -349,18 +374,16 @@ int main(int argc, char* argv[]){
 		FD_SET(sock, &fds);
 		
 		// Wait until timeout or data received.
-		/*
 		clock_gettime(CLOCK_REALTIME,&end);
 		diff = 1000000000L*(end.tv_sec-start.tv_sec)+end.tv_nsec-start.tv_nsec;
 		subtractTime((int)(diff/1000000));
-		*/
 		// Set up the struct timeval for the timeout.
 		waittime.tv_sec = (front->next->dtime)/1000;
 		waittime.tv_usec = (front->next->dtime-waittime.tv_sec*1000)*1000;
 		if(verbose) printf("\nfront->next->dtime time is %d msec, waiting...\n",
 				front->next->dtime);
 		n = select(sock+1, &fds, NULL, NULL, &waittime);
-		//clock_gettime(CLOCK_REALTIME,&start);
+		clock_gettime(CLOCK_REALTIME,&start);
 
 		if (n == 0 && front->next != back){//timeout
 				if(verbose) printf(
@@ -374,7 +397,7 @@ int main(int argc, char* argv[]){
 			printf("select returned -1\n");
 			return 1;   
 	
-		}else{//ready to read: inserting
+		}else{//ready to read: inserting or deleting
 			if(verbose) 
 			printf("select indicated ready to read, left: %d sec %d usec\n",
 					waittime.tv_sec,waittime.tv_usec);
@@ -398,19 +421,17 @@ int main(int argc, char* argv[]){
 			printf("received %d msec,%d seqnum,%d portnum\n",
 					new.dtime, new.seqnum, new.portnum);
 
-			//check for exit
+			//check for delete
 			if(new.dtime < 0){
-				fprintf(stderr,"negative number to wait, exiting\n");
-				free(nodes);
-				close(sock);
-				close(outsock);
-				return 0;
-			}
+				if(verbose)
+				printf("deleting node with seq num %d\n",new.seqnum);
+				deleteNode(new.seqnum);
+			}else{
 			//insert
 			if(insert(&new)){
 				fprintf(stderr,"failed to insert new node\n");
 				return -1;
-			}
+			}}
 		}
 	}
 }

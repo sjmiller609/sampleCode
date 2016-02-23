@@ -21,17 +21,15 @@ def listening(returntimes,packnum):
 if len(sys.argv) < 3:
 	print (sys.argv[0]+' <port to send to> <number of packets>')
 	exit()
-
 #set up wait times
 packnum = int(sys.argv[2])
 waittimes = [None]*packnum
 for i in range(0,packnum):
 	waittimes[i] = randint(1000,5000)
-
 UDP_IP = "127.0.0.1"
 UDP_PORT = int(sys.argv[1])
-
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+
 returntimes = [None]*packnum
 senttimes = [None]*packnum
 listener = Thread(target = listening, args = (returntimes,packnum))
@@ -62,3 +60,27 @@ print("differences")
 print(diffs)
 print("average difference between expected and experiemental (msec)")
 print(avg)
+
+MESSAGE = pack('!iii',20000,1,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+MESSAGE = pack('!iii',10000,2,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+MESSAGE = pack('!iii',30000,3,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+
+sleep(5)
+MESSAGE = pack('!iii',-1,2,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+
+MESSAGE = pack('!iii',20000,4,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+sleep(5)
+
+MESSAGE = pack('!iii',18000,5,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+
+MESSAGE = pack('!iii',-1,4,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+
+MESSAGE = pack('!iii',-1,8,1234)
+sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))

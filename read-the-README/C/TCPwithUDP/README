@@ -1,0 +1,30 @@
+Steven Miller .5252
+project 1 checkpoint 1
+
+timer-process.c
+	the timer process
+timer-process-test.py
+	for testing the timer
+
+crc.h
+	implements CRC
+crc-test.c
+	tests the crc implementation
+
+make stuff:
+$ make
+$ cd Troll
+$ make
+$ cd ..
+
+test CRC:
+TWO SHELLS, same host
+shellA$ ./Troll/troll -t -g 25 -x 0 <troll port>
+shellB$ crc-test <troll port> localhost
+
+test timer:
+TWO SHELLS, same host
+shellA$ timer-process <timer port> --verbose
+shellB$ timer-process-test.py <timer port> <num of packets>
+
+if you send more than about 100 packets at once things could go badly

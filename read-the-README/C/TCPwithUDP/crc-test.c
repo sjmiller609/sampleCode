@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
 
 void printchar(char a){
 	int i;
@@ -64,10 +68,63 @@ void fill_random(char* buffer,int bytes){
 		buffer[i] = rand();
 	}
 }
-void trollify(char* buffer, int bytes){
+void trollify(char* buffer, int bytes, int trollport,char* trollhost){
+	int sock;
+	struct{
+		struct sockaddr_in header;
+		char body[bytes];
+	} message;
+	bcopy(buffer,message.body,bytes);
 
+	sock = socket(AF_INET, SOCK_DGRAM,0);
+	if(sock < 0) {
+		perror("opening datagram socket");
+		exit(2);
+	}
+
+	message.header.sin_family = AF_INET;
+	message.header.sin_port = htons(4567);
+	message.header.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+
+	if(bind(sock,(struct sockaddr *)&(message.header),sizeof(message.header))){
+		perror("getting socket message.header");
+		exit(2);
+	}
+	message.header.sin_family = htons(AF_INET);
+	struct sockaddr_in troll;
+	troll.sin_family = AF_INET;
+	//troll.sin_addr = message.header.sin_addr;
+	troll.sin_port = htons(trollport);
+
+	struct hostent *hp,*gethostbyname();
+	hp = gethostbyname(trollhost);
+	if(hp == 0) {
+		fprintf(stderr, "%s:unknown host\n", trollhost);
+		exit(3);
+    	}
+	bcopy((char *)hp->h_addr, (char *)&troll.sin_addr, hp->h_length);
+
+	/*send to troll*/
+	if(sendto(sock, (char*)&message, sizeof(message), 0, (struct sockaddr *)&troll, sizeof(troll)) <0) {
+		perror("sending datagram message");
+		exit(4);
+	}
+
+	bzero(&message, sizeof(message));
+	if(recvfrom(sock, &message, sizeof(message), 0,NULL,NULL) < 0) {
+		perror("sending datagram message");
+		exit(5);
+	}
+	bcopy(message.body,buffer,bytes);
+	/* close connection */
+	close(sock);
 }
 int main(int argc,char* argv[]){
+	if(argc<3){
+		printf("%s <troll port> <troll host>\n",argv[0]);
+		return -1;
+	}
+/*
 	if(test1()){
 		printf("test 1 passed\n");
 	}else{
@@ -78,6 +135,7 @@ int main(int argc,char* argv[]){
 	}else{
 		printf("test 2 failed\n");
 	}
+*/
 	int bytes_data = 4;
 	char TCP_header[4*6+bytes_data];
 	char TCP_header_og[4*6+bytes_data];
@@ -87,29 +145,18 @@ int main(int argc,char* argv[]){
 		fill_random(TCP_header,4*6+bytes_data);
 		insertChecksum(TCP_header,4*6+bytes_data);
 		bcopy(TCP_header,TCP_header_og,4*6+bytes_data);
-		trollfy(TCP_header,4*6+bytes_data);
-		if(strcmp(TCP_header,TCP_header_og)){
-			/*not equal, troll changed*/
-			if(isValidCRC(TCP_header,4*6+bytes_data)){
-				printf("failed!!!!!!!\n");
-			}else{
-				printf("passed\n");
-			}
+
+		printf("\nsending to troll:");
+		printTCP(TCP_header,4*6+bytes_data);
+		trollify(TCP_header,4*6+bytes_data,atoi(argv[1]),argv[2]);
+		printf("\ngot back");
+		printTCP(TCP_header,4*6+bytes_data);
+		printf("isValidCRC says: ");
+		if(isValidCRC(TCP_header,4*6+bytes_data)){
+			printf("true\n");
 		}else{
-			if(!isValidCRC(TCP_header,4*6+bytes_data)){
-				printf("failed!!!!!!!\n");
-			}else{
-				printf("passed\n");
-			}
+			printf("false\n");
 		}
 	}
-		
-/*
-	if(
-	!!(isSameAfterTroll(TCP_header,4*6+bytes_data)) ==
-	!!(isValidCRC(TCP_header,4*6+bytes_data))
-	) printf("passed\n");
-*/
-	
 	return 0;
 }
