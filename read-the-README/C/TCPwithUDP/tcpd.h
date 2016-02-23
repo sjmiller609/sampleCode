@@ -1,3 +1,5 @@
+#define MAX_MSS 1000
+
 typedef struct tcpheader{
 	uint16_t sourceport;
 	uint16_t destport;
@@ -10,16 +12,17 @@ typedef struct tcpheader{
 	uint32_t optionsandpadding;
 }tcpheader;
 
-typedef struct Listenq{
+struct listenQ{
 	tcpheader header;
 	int state;
 	struct sockaddr cliaddr;
 	int cliaddrlen;
-	Listenq* nextptr;
-}Listenq;
-Listenq dummynode;
-Listenq* listenqhead = &dummynode;
-pthread_mutex_t listenqmutex;
+	struct listenQ* next;
+};
+struct listenQ* front;
+struct listenQ* back;
+int LQbacklog;
+pthread_mutex_t listenQmutex;
 
 int SOCKET(int domain, int type, int protocol){
 	//only ok to use AF_INET sockets for this implementation
@@ -59,22 +62,19 @@ int BIND(int sockfd, const struct sockaddr *address, socklen_t address_len){
 //set up recv buffer stuff
 //listen queue of max length @backlog
 //passive open, waits for client SYN
-pthread_mutex_t listenqmutex;
 void* listenfunc(void** args){
 	struct sockaddr cliaddr;
-	char[sizeof(tcpheader)] buffer;
+	char[sizeof(tcpheader)+MAX_MSS] buffer;
 	int recvd;
 	for(;;){
 		//this socket should only pay attention to valid SYN packets
 		recvd = recvfrom(sockfd, buffer, sizeof(buffer)
 		,0,cliaddr,sizeof(cliaddr));
-		if(recvd == sizeof(tcpheader)){
-			if(isValidSYN(buffer)){
-				enqueue(buffer,sizeof(buffer),)
-			}else if(isValidFIN(buffer)){
-				finRecvd();
-				return NULL;
-			}
+		if(isValidSYN(&buffer,recvd)){
+			enqueue(&buffer,sizeof(buffer));
+		}else if(isValidFIN(&buffer,recvd)){
+			finRecvd();
+			return NULL;
 		}
 		bzero(buffer,recvd);
 	}
@@ -88,17 +88,22 @@ struct Listenq{
 bool listening = false;
 int LISTEN(int sockfd, int const backlog){
 	if(listening){
+		fprintf(stderr,"error: already listening\n");
 		return -1;
 	}
 	listening = true;
-	if(pthread_mutex_init(&listenqmutex,NULL)) return -1;
-
+	LQbacklog = backlog;
+	if(pthread_mutex_init(&listenqmutex,NULL)){
+		fprintf(stderr,"failed to initialize listenqmutex\n");
+		return -1;
+	}
 	//create detached thread
 	pthread_t asynclisten;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachedstate(&attr,PTHREAD_CREATE_DETACHED);
 	if(pthread_create(&asynclisten,&attr,&listenfunc,NULL)){
+		fprintf(stderr,"failed to create listening thread\n");
 		return -1;
 	}
 	return 0;
