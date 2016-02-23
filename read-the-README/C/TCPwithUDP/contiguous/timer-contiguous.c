@@ -27,6 +27,8 @@ struct Dnode* front;
 struct Dnode* back;
 
 //storage for rest of nodes
+struct Dnode* nodes;
+int sizeofnodes;
 int nodecount;
 
 int print_dtime(){
@@ -71,11 +73,65 @@ int subtractTime(int msec){
 	}
 	return 0;
 }
+
+//this is called when realloc moves the array, it increments pointers in dll
+	//the void stuff is because i want to deal with raw pointer difference,
+	//not the difference in terms of multiples of sizeof(struct Dnode)
+	//(it won't work if you don't do that because realloc might move array
+	//by a non-multiple of sizeof(struct Dnode)
+int shiftpointers(){
+	int i = 2;
+	int toshift = (void*)&(nodes[0])-(void*)front;
+	for(;i<nodecount;i++){
+		nodes[i].next = (struct Dnode*)((void*)nodes[i].next+toshift);
+		nodes[i].prev = (struct Dnode*)((void*)nodes[i].prev +toshift);
+	}
+	front = (struct Dnode*)((void*)front+toshift);
+	front->next = (struct Dnode*)((void*)front->next+toshift);
+	back = (struct Dnode*)((void*)back+toshift);
+	back->prev = (struct Dnode*)((void*)back->prev +toshift);
+	return 0;
+}
+
+int maybedoubletable(){
+	if(nodecount*sizeof(struct Dnode) > sizeofnodes){
+		if(verbose)
+		printf("\t\tdoubling table current size %d, front = %p\n",sizeofnodes,front);
+		nodes = realloc(nodes,sizeofnodes*2);
+		if(nodes == NULL){
+			fprintf(stderr,"could not realloc, probably out of memory\n");
+			return -1;
+		}
+		sizeofnodes = sizeofnodes*2;
+		if(front != &(nodes[0])){
+			if(verbose){
+			printf("\t\t\tarray moved, shifting all pointers\n");
+			printf("\t\t\told front %p, old back %p\n",front,back);
+			printf("\t\t\tnew front should be: %p\n",&(nodes[0]));
+			}
+			if(shiftpointers()) return -1;
+			if(verbose)
+			printf("\t\t\tnew front %p, new back %p\n",front,back);
+		}
+		if(verbose)
+		printf("\t\tdone. new size %d,front = %p\n",sizeofnodes,front);
+	}
+	return 0;
+}
 int insert(struct Dnode* insertme){
 	if(verbose){
-		printf("\tinserting node, dtime order before:\n");
-		if(print_dtime()) return -1;
+	printf("\tinserting node, dtime order before:\n");
+	if(print_dtime()) return -1;
 	}
+	nodecount++;
+ 	//table doubling (if we are running out of room)
+	if(maybedoubletable()) return -1;
+	//copy temporary values into the last spot in the Dnode stack
+	nodes[nodecount-1].dtime = insertme->dtime;
+	nodes[nodecount-1].seqnum = insertme->seqnum;
+	nodes[nodecount-1].portnum = insertme->portnum;
+	//change pointer to new memory
+	insertme = &(nodes[nodecount-1]);
 	//get a pointer to the first node in the list (not the front dummy node)
 	struct Dnode* current = front->next;
 	//compare current pointer to node to the back node to make sure we aren't at end of list
@@ -95,11 +151,9 @@ int insert(struct Dnode* insertme){
 			//insert
 			insertme->next->prev = insertme;
 			insertme->prev->next = insertme;
-			nodecount++;
-
 			if(verbose){
-				printf("\torder after insert\n");
-				if(print_dtime()) return -1;
+			printf("\torder after insert\n");
+			if(print_dtime()) return -1;
 			}
 			return 0;
 		}
@@ -111,11 +165,9 @@ int insert(struct Dnode* insertme){
 	//insert
 	insertme->next->prev = insertme;
 	insertme->prev->next = insertme;
-	nodecount++;
-
 	if(verbose){
-		printf("\torder after insert\n");
-		if(print_dtime()) return -1;
+	printf("\torder after insert\n");
+	if(print_dtime()) return -1;
 	}
 	return 0;
 }
@@ -131,6 +183,24 @@ int sendmessage(int seqnum, int portnum){
 			(struct sockaddr*)&dest,sizeof(dest));
 }
 
+//swaps two nodes' storage locations, modifying pointers as needed.
+void swapNodes(struct Dnode* A,struct Dnode* B){
+	if (A==B) return;
+	//switch pointers to each node (pointers to A, switch to B and vice-versa)
+	struct Dnode* Anext = A->next;
+	struct Dnode* Aprev = A->prev;
+	struct Dnode* Bnext = B->next;
+	struct Dnode* Bprev = B->prev;
+	Anext->prev = B;
+	Aprev->next = B;
+	Bnext->prev = A;
+	Bprev->next = A;
+	//swap bytes
+	struct Dnode temp = *A;
+	*A = *B;
+	*B = temp;
+	return;
+}
 //removes the expired node from doubly linked list and stack
 int removeExpired(){
 	if(verbose){
@@ -144,27 +214,49 @@ int removeExpired(){
 	while(!(front->next->dtime)){
 		//pointer to mem location of removing node
 		struct Dnode* remove_me = front->next;
+		struct Dnode* last_inserted = &(nodes[nodecount-1]);
 		//send buzzer message
 		if(sendmessage(remove_me->seqnum,remove_me->portnum)!=sizeof(uint32_t)){
 			fprintf(stderr,"failed to send buzzer message\n");
 			return -1;
 		}
+		//move remove_me to last spot in stack
+		swapNodes(remove_me,last_inserted);
 		//remove node from dll
-		remove_me->next->prev = remove_me->prev;
-		remove_me->prev->next = remove_me->next;
+		front->next->next->prev = front;
+		front->next = front->next->next;
 
-		free(remove_me);
 		//indicate node removed in node stack
 		nodecount--;
+		//potentially free some space in the nodes stack
+		if(nodecount*sizeof(struct Dnode)*2 < sizeofnodes){
+			if(verbose)
+			printf("\t\thalving table current size %d\n",sizeofnodes);
+			nodes = realloc(nodes,sizeofnodes/2);
+			if(nodes == NULL){
+				fprintf(stderr,"could not realloc, probably out of memory\n");
+				return -1;
+			}
+			front = &(nodes[0]);
+			back = &(nodes[1]);
+			sizeofnodes = sizeofnodes/2;
+			if(verbose)
+			printf("\t\tdone. current size %d\n",sizeofnodes);
+		}
+		if(verbose){
+			printf("\torder after:\n");
+			if(print_dtime()) return -1;
+		}
 	}
 	return 0;
 }
-
 void deleteNode(int seqnum){
 	struct Dnode* current = front->next;
-	//struct Dnode* last_inserted = &(nodes[nodecount -1]);
+	struct Dnode* last_inserted = &(nodes[nodecount -1]);
 	while(current!=back){
 		if(current->seqnum == seqnum){
+			swapNodes(current,last_inserted);
+			current = last_inserted;
 			if(verbose){
 				printf("deleting: dtime = %d, seqnum = %d\n",
 				current->dtime,current->seqnum);
@@ -173,14 +265,12 @@ void deleteNode(int seqnum){
 			current->next->prev = current->prev;
 			if(current->next != back)
 			current->next->dtime += current->dtime;
-			free(current);
 			nodecount--;
 			break;
 		}
 		current = current->next;
 	}
 }
-
 //returns -1 if invalid port number
 //otherwise returns the port number
 int portNum(char port[]){
@@ -196,17 +286,6 @@ int portNum(char port[]){
 	return i;
 }
 
-int freeNodes(){
-	int i = 0;
-	struct Dnode* current = front;
-	while(current != back){
-		current = current->next;
-		free((void *) current->prev);
-	}
-	//free last node (back)
-	free(current);
-	return 0;
-}
 int main(int argc, char* argv[]){
 	if(argc < 2){
 		fprintf(stderr,
@@ -229,15 +308,17 @@ int main(int argc, char* argv[]){
 	outsock = socket(AF_INET,SOCK_DGRAM,0);
 	//intitialize doubly linked list to implement delta-timer
 	//using two dummy nodes
-	front = (struct Dnode*) malloc(sizeof(struct Dnode));
-	back = (struct Dnode*) malloc(sizeof(struct Dnode));
+	nodes = (struct Dnode*) malloc(2*sizeof(struct Dnode));
+	sizeofnodes = 2*sizeof(struct Dnode);
+	nodecount = 2;
+	front = &(nodes[0]);
+	back = &(nodes[1]);
 	front->next = back;
 	front->prev = NULL;
 	back->prev = front;
 	back->next = NULL;
 	back->dtime = INT_MAX;
-	nodecount = 2;
-
+	back->seqnum = 1337;
 	int sock;
 	struct sockaddr_in name;
 	/*create socket*/
@@ -266,7 +347,27 @@ int main(int argc, char* argv[]){
 	struct timespec start,end;
 	clock_gettime(CLOCK_REALTIME,&start);
 	while(1){
-
+	/*	//may be useful for debugging later
+		if(front != &(nodes[0])){
+			fprintf(stderr,"oops! address of front changed\n");
+			return -1;
+		}
+		if(back != &(nodes[1])){
+			fprintf(stderr,"oops! address of back is not right\n");
+			return -1;
+		}
+		if(back->dtime != INT_MAX){
+			fprintf(stderr, "oops! value of back-> dtime changed to %d\n",
+						back->dtime);
+			return -1;
+		}
+		if(nodecount > 2 && front->next == back){
+			fprintf(stderr,
+			"oops! front->next is back when it's not supposed to be.\n");
+			return -1;
+		}
+	*/
+		
 		// Set up the file descriptor set.
 		FD_ZERO(&fds);
 		//add "sock" to reading set for select
@@ -325,24 +426,12 @@ int main(int argc, char* argv[]){
 				if(verbose)
 				printf("deleting node with seq num %d\n",new.seqnum);
 				deleteNode(new.seqnum);
-			}else if(!(new.dtime || new.seqnum || new.portnum)){//all zeros means EXIT
-				printf("exiting program\n");
-				if(freeNodes()){
-					fprintf(stderr,"something went wrong freeing nodes.\n");
-					return -1;
-				}
-				close(outsock);
-				close(sock);
-				return 0;
 			}else{
-				//insert
-				struct Dnode* newPtr = (struct Dnode*) malloc(sizeof(struct Dnode));
-				*newPtr = new;
-				if(insert(newPtr)){
-					fprintf(stderr,"failed to insert new node\n");
-					return -1;
-				}
-			}
+			//insert
+			if(insert(&new)){
+				fprintf(stderr,"failed to insert new node\n");
+				return -1;
+			}}
 		}
 	}
 }

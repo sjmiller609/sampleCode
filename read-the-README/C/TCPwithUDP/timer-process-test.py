@@ -61,6 +61,7 @@ print(diffs)
 print("average difference between expected and experiemental (msec)")
 print(avg)
 
+''' below was for specific grading requirements
 MESSAGE = pack('!iii',20000,1,1234)
 sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
 MESSAGE = pack('!iii',10000,2,1234)
@@ -84,3 +85,4 @@ sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
 
 MESSAGE = pack('!iii',-1,8,1234)
 sock.sendto(MESSAGE,(UDP_IP,UDP_PORT))
+'''
