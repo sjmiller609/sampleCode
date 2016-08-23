@@ -23,6 +23,9 @@ There is also a detailed summary of my education in this directory.
 
 # History
 
+### 8/23/16
+* added a craigslist notifier script in Python
+
 ### 2/17/16
 * timer-process is working in the TCPwithUDP project
 
