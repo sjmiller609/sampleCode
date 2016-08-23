@@ -37,10 +37,10 @@ def look_for_new_posts(term,url,zip,dist):
 
 #prints out titles its given
 def print_titles(titles,urls):
+    print(chr(27) + "[2J")
+    print()
     if titles:
         #clears screen
-        print(chr(27) + "[2J")
-        print()
         print("found "+str(len(titles))+" links")
         print()
         for i in range(1,len(titles)):
@@ -52,7 +52,6 @@ def print_titles(titles,urls):
     else:
         print("no matches found.")
     print()
-    return titles
     
 
 #prints a footer for the view
@@ -73,6 +72,22 @@ def send_email(email,body,subject):
     server.sendmail("sjmiller609@twc.com", email, msg)
     server.quit()
 
+def save(titles,filetail):
+    with open(".last_titles"+filetail+".txt","w") as f:
+        for title in titles:
+            f.write(title.rstrip()+"\n")
+
+def load(filetail):
+    result = []
+    filename = ".last_titles"+filetail+".txt"
+    print("opening file: "+filename)
+    with open(filename,"r") as f:
+        for line in f:
+            line = line.rstrip()
+            if not line: continue
+            result.append(line)
+    print("returning old titles")
+    return result
 
 zip = get("(\d{5})","your zip code?: ","not a properly formatted zip (5 digits)")
 print("using zip: " + str(zip))
@@ -114,24 +129,29 @@ else:
     url = url.group(0)
 print("using url: "+url)
 
-def save(titles,urls,filetail):
-    with open(".last_titles"+filetail+".txt","w") as f:
-        for title in titles:
-            f.write(title+"\n")
 
-last_titles = [""]
-titles, urls = look_for_new_posts(search_term,url,zip,miles)
-print_titles(titles,urls)
-print_tail(0)
+last_titles = []
+titles = []
+try:
+    last_titles = load(zip+miles+search_term)
+    for t in last_titles:
+        print(t)
+except:
+    print("file not found")
+    last_titles, urls = look_for_new_posts(search_term,url,zip,miles)
+    save(last_titles,zip+miles+search_term)
+    print_titles(last_titles,urls)
+    print_tail(0)
 
 counter = 0
 while True:
-    counter+=1
     sleep(5)
+    #do this once every 60 seconds => 5*12 = 60
     if(counter % 12 == 0):
-        last_titles = list(titles)
+        #get new titles and urls
         titles, urls = look_for_new_posts(search_term,url,zip,miles)
-        if((titles[0] != last_titles[0]) and (counter!=1)):
+        #if most recent title is not the same as the most recent last time
+        if(titles[0] != last_titles[0]):
             #there is at least one new title
             print("!!!!!!!!!!NEW LISTING!!!!!!!!!!!!")
             body = ""
@@ -139,9 +159,13 @@ while True:
             while((len(titles)>i) and (titles[i] != last_titles[0])):
                 body += titles[i]+": "+url+urls[i]+"\n"
                 i+=1
-            send_email(email,body,"new craigslist posts")
+            send_email(email,body,"new craigslist posts: "+search_term)
+            save(titles,zip+miles+search_term)
+            last_titles = list(titles)
+    pass
     print_titles(titles,urls)
     print_tail(5*(counter % 12))
+    counter+=1
 
 quit()
 
