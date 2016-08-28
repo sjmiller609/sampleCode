@@ -8,6 +8,7 @@ import requests
 import re
 import smtplib
 from time import sleep
+from ghost import Ghost
 
 #get and validate user input
 def get(regex,query,error_msg):
@@ -20,7 +21,6 @@ def get(regex,query,error_msg):
         else:
             print(error_msg)
 
-
 #returns list of titles
 def look_for_new_posts(term,url,zip,dist):
     query_string = url
@@ -29,10 +29,16 @@ def look_for_new_posts(term,url,zip,dist):
     query_string += '&sort=date'
     query_string += "&search_distance="+dist
     query_string += "&postal="+zip
-    session = requests.Session()
-    response = session.get(query_string)
-    titles = re.findall('<a href="/\w{3}/\d*.html" data-id="\d*" class="hdrlnk"><span id="titletextonly">([^<]{1,500})</span>',response.text)
-    urls = re.findall('<a href="(/\w{3}/\d*.html)" data-id="\d*" class="hdrlnk"><span id="titletextonly">[^<]{1,500}</span>',response.text)
+    script = 'elems=document.getElementsByClassName("hdrlnk");arr=[];for(var i = 0;i<elems.length;i++){arr.push(elems[i].innerHTML);};arr;'
+    script2 = 'elems=document.getElementsByClassName("hdrlnk");arr=[];for(var i = 0;i<elems.length;i++){arr.push(elems[i].href);};arr;'
+    ghost = Ghost()
+    titles = []
+    urls = []
+    with ghost.start() as sess:
+        page, res = sess.open(query_string)
+        page, res = sess.wait_for_page_loaded()
+        titles, res = sess.evaluate(script)
+        urls, res = sess.evaluate(script2)
     return titles, urls
 
 #prints out titles its given
@@ -48,7 +54,7 @@ def print_titles(titles,urls):
         print("\nabove in reverse chronological order: newest at bottom")
         print("Most recent:")
         print(titles[0])
-        print(url + urls[0])
+        print(urls[0])
     else:
         print("no matches found.")
     print()
@@ -151,17 +157,17 @@ while True:
         #get new titles and urls
         titles, urls = look_for_new_posts(search_term,url,zip,miles)
         #if most recent title is not the same as the most recent last time
-        if(titles[0] != last_titles[0]):
+        if(len(titles) > 0 and len(last_titles)>0 and titles[0] != last_titles[0]):
             #there is at least one new title
             print("!!!!!!!!!!NEW LISTING!!!!!!!!!!!!")
             body = ""
             i = 0
             while((len(titles)>i) and (titles[i] != last_titles[0])):
-                body += titles[i]+": "+url+urls[i]+"\n"
+                body += titles[i]+": "+urls[i]+"\n"
                 i+=1
             send_email(email,body,"new craigslist posts: "+search_term)
-            save(titles,zip+miles+search_term)
-            last_titles = list(titles)
+        save(titles,zip+miles+search_term)
+        last_titles = list(titles)
     pass
     print_titles(titles,urls)
     print_tail(5*(counter % 12))
