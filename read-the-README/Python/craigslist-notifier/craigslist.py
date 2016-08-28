@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #author: steven miller
 #creation date: 08/22/2016
-#last editted: 08/22/2016
+#last editted: 08/28/2016
 #craiglist search tool
 
 import requests
