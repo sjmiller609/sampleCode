@@ -19,7 +19,9 @@ There is also a detailed summary of my education in this directory.
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/C/multithreading">Producer / Consumer</a>: C
 	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/C/binarySearchTree">Binary Search Tree</a>: It doesn't do anything that interesting but it is a good example of C code
 * **Object Oriented**
-	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/interpreter">Interpreter</a>: an interpreter written in Python
+	- <a href="https://github.com/sjmiller609/sampleCode/tree/master/read-the-README/Python/interpreter">Interpreter</a>: an interpreter written in Python (I consider this a well organized project)
+	
+NOTE: I now consider most this code to have poor readability. I think the interpreter is pretty good though.(2/1/2017)
 
 # History
 
